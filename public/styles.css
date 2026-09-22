@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alliance Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="dashboard-body">
+    <main class="container">
+      <header class="topbar">
+        <h1>Alliance Tracker</h1>
+        <div class="topbar-actions">
+          <span class="date-pill"><%= currentDate %></span>
+          <a class="logout" href="/logout">Déconnexion</a>
+        </div>
+      </header>
+
+      <section class="panel form-panel">
+        <h2>Mettre à jour mes informations</h2>
+        <form method="POST" action="/save-player">
+          <div class="field-group">
+            <label for="pseudo">Pseudo</label>
+            <select id="pseudo" name="pseudo" required>
+              <% members.forEach((member) => { %>
+                <option value="<%= member.pseudo %>"><%= member.pseudo %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="tank">Puissance Tank</label>
+            <input id="tank" name="tank" type="number" min="0" value="0" required />
+          </div>
+
+          <div class="field-group">
+            <label for="avion">Puissance Avion</label>
+            <input id="avion" name="avion" type="number" min="0" value="0" required />
+          </div>
+
+          <div class="field-group">
+            <label for="missile">Puissance Missile</label>
+            <input id="missile" name="missile" type="number" min="0" value="0" required />
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" name="t11" />
+            <span>Possède les soldats T11</span>
+          </label>
+
+          <button type="submit">Enregistrer</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Classement global</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pseudo</th>
+                <th>Tank</th>
+                <th>Avion</th>
+                <th>Missile</th>
+                <th>Total</th>
+                <th>T11</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% members.forEach((member) => { %>
+                <tr>
+                  <td><%= member.pseudo %></td>
+                  <td><%= Number(member.tank || 0).toLocaleString('fr-FR') %></td>
+                  <td><%= Number(member.avion || 0).toLocaleString('fr-FR') %></td>
+                  <td><%= Number(member.missile || 0).toLocaleString('fr-FR') %></td>
+                  <td><%= Number(member.total || 0).toLocaleString('fr-FR') %></td>
+                  <td><%= member.t11 || 'Non' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel chart-panel">
+        <h2>Évolution</h2>
+        <canvas id="historyChart"></canvas>
+      </section>
+    </main>
+
+    <script>
+      const history = <%- JSON.stringify(history) %>;
+      const labels = history.map((item) => new Date(item.date).toLocaleDateString('fr-FR'));
+      const totals = history.map((item) => Number(item.total || 0));
+      const tanks = history.map((item) => Number(item.tank || 0));
+      const avions = history.map((item) => Number(item.avion || 0));
+      const missiles = history.map((item) => Number(item.missile || 0));
+
+      new Chart(document.getElementById('historyChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Total',
+              data: totals,
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.15)',
+              tension: 0.25,
+              fill: true
+            },
+            {
+              label: 'Tank',
+              data: tanks,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              tension: 0.25,
+              fill: false
+            },
+            {
+              label: 'Avion',
+              data: avions,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.25,
+              fill: false
+            },
+            {
+              label: 'Missile',
+              data: missiles,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.25,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: false
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
