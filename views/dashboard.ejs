@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paramétrage du joueur</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="dashboard-body">
+    <main class="container">
+      <header class="topbar">
+        <h1>Créer la fiche du joueur</h1>
+        <a class="logout" href="/logout">Déconnexion</a>
+      </header>
+
+      <section class="panel form-panel">
+        <form method="POST" action="/setup">
+          <div class="field-group">
+            <label for="pseudo">Pseudo</label>
+            <input id="pseudo" name="pseudo" type="text" value="<%= pseudo %>" readonly />
+          </div>
+
+          <div class="field-group">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" value="<%= email %>" readonly />
+          </div>
+
+          <div class="field-group">
+            <label for="tank">Puissance Tank</label>
+            <input id="tank" name="tank" type="number" min="0" value="0" required />
+          </div>
+
+          <div class="field-group">
+            <label for="avion">Puissance Avion</label>
+            <input id="avion" name="avion" type="number" min="0" value="0" required />
+          </div>
+
+          <div class="field-group">
+            <label for="missile">Puissance Missile</label>
+            <input id="missile" name="missile" type="number" min="0" value="0" required />
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" name="t11" />
+            <span>Possède les soldats T11</span>
+          </label>
+
+          <button type="submit">Valider le profil</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
